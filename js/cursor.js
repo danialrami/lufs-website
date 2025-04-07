@@ -22,8 +22,11 @@ class OrbitCursor {
     this.orbitSpeed = 1.5;
     
     // Size and padding properties
-    this.ringSize = 40; // Default ring size
-    this.orbitPadding = 5; // Padding between ring edge and orbit path
+    this.defaultRingSize = 40; // Default ring size in pixels
+    this.hoverRingSize = 18; // Smaller size when hovering (previously 30)
+    this.activeRingSize = 14; // Even smaller when clicking (previously 20)
+    this.currentRingSize = this.defaultRingSize;
+    this.orbitPadding = 10; // Increased padding between ring edge and orbit path
     
     // Audio controller reference
     this.audioController = window.LUFSAudioController ? new window.LUFSAudioController() : null;
@@ -39,7 +42,6 @@ class OrbitCursor {
     this.handleElementMouseEnter = this.handleElementMouseEnter.bind(this);
     this.handleElementMouseLeave = this.handleElementMouseLeave.bind(this);
     this.update = this.update.bind(this);
-    this.updateRingSize = this.updateRingSize.bind(this);
     this.updateOrbitPosition = this.updateOrbitPosition.bind(this);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
@@ -68,8 +70,8 @@ class OrbitCursor {
     // Set cursor style for body (explicitly hiding the native cursor)
     document.body.style.cursor = 'none';
     
-    // Get initial ring size
-    this.updateRingSize();
+    // Configure the ring sizes directly in CSS
+    this.configureCursorSizes();
     
     // Add event listeners for mouse movement and clicks
     document.addEventListener('mousemove', this.handleMouseMove);
@@ -100,6 +102,31 @@ class OrbitCursor {
     this.update();
   }
   
+  // Configure cursor sizes directly with CSS variables
+  configureCursorSizes() {
+    const style = document.createElement('style');
+    style.textContent = `
+      :root {
+        --cursor-ring-size: ${this.defaultRingSize}px;
+        --cursor-hover-size: ${this.hoverRingSize}px;
+        --cursor-active-size: ${this.activeRingSize}px;
+      }
+      .cursor-ring {
+        width: var(--cursor-ring-size);
+        height: var(--cursor-ring-size);
+      }
+      .cursor-ring.hover {
+        width: var(--cursor-hover-size);
+        height: var(--cursor-hover-size);
+      }
+      .cursor-ring.active {
+        width: var(--cursor-active-size);
+        height: var(--cursor-active-size);
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
   // Handle mouse movement
   handleMouseMove(event) {
     this.targetPosition = {
@@ -117,9 +144,7 @@ class OrbitCursor {
   handleMouseDown() {
     this.isActive = true;
     this.cursorRing.classList.add('active');
-    
-    // Recalculate ring size after adding active class
-    this.updateRingSize();
+    this.currentRingSize = this.activeRingSize;
     
     // Play click sound if audio controller exists
     if (this.audioController && typeof this.audioController.playSound === 'function') {
@@ -132,8 +157,8 @@ class OrbitCursor {
     this.isActive = false;
     this.cursorRing.classList.remove('active');
     
-    // Recalculate ring size after removing active class
-    this.updateRingSize();
+    // Set the current ring size based on hover state
+    this.currentRingSize = this.isHovering ? this.hoverRingSize : this.defaultRingSize;
   }
   
   // Handle visibility change (user switches tabs)
@@ -164,9 +189,7 @@ class OrbitCursor {
   handleElementMouseEnter(event) {
     this.isHovering = true;
     this.cursorRing.classList.add('hover');
-    
-    // Update ring size after adding hover class
-    this.updateRingSize();
+    this.currentRingSize = this.isActive ? this.activeRingSize : this.hoverRingSize;
     
     // Play hover sound if audio controller exists and element has data-sound
     const soundId = event.currentTarget.getAttribute('data-sound');
@@ -179,20 +202,7 @@ class OrbitCursor {
   handleElementMouseLeave() {
     this.isHovering = false;
     this.cursorRing.classList.remove('hover');
-    
-    // Update ring size after removing hover class
-    this.updateRingSize();
-  }
-  
-  // Update ring size from computed style
-  updateRingSize() {
-    // Small delay to ensure CSS transitions have applied
-    setTimeout(() => {
-      if (this.cursorRing) {
-        const style = window.getComputedStyle(this.cursorRing);
-        this.ringSize = parseInt(style.width, 10);
-      }
-    }, 50);
+    this.currentRingSize = this.isActive ? this.activeRingSize : this.defaultRingSize;
   }
   
   // Update cursor position
@@ -220,8 +230,9 @@ class OrbitCursor {
     // Update orbit angle (always clockwise)
     this.orbitAngle += this.orbitSpeed * 0.02;
     
-    // Calculate orbital radius with padding
-    const orbitRadius = (this.ringSize / 2) + this.orbitPadding;
+    // Calculate orbital radius with consistent padding
+    // Division by 2 for radius, plus the padding
+    const orbitRadius = (this.currentRingSize / 2) + this.orbitPadding;
     
     // Calculate orbital position
     const dotX = this.position.x + Math.cos(this.orbitAngle) * orbitRadius;

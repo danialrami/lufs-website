@@ -938,25 +938,29 @@ p {
 }
 
 .cursor-ring {
-  width: 40px;
-  height: 40px;
+  /* Size is now controlled via CSS variables set in JS */
+  width: var(--cursor-ring-size, 40px);
+  height: var(--cursor-ring-size, 40px);
   border: 2px solid var(--accent-primary);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease, opacity 0.3s ease;
+  transition: width 0.2s ease-out, height 0.2s ease-out, 
+              background-color 0.2s ease-out, opacity 0.3s ease;
 }
 
 /* For interactive elements */
 .cursor-ring.hover {
-  width: 30px;
-  height: 30px;
+  /* Size is now controlled via CSS variables set in JS */
+  width: var(--cursor-hover-size, 18px);
+  height: var(--cursor-hover-size, 18px);
   background-color: rgba(120, 190, 186, 0.1);
 }
 
 /* For clickable elements */
 .cursor-ring.active {
-  width: 20px;
-  height: 20px;
+  /* Size is now controlled via CSS variables set in JS */
+  width: var(--cursor-active-size, 14px);
+  height: var(--cursor-active-size, 14px);
   background-color: var(--accent-primary);
   opacity: 0.5;
 }

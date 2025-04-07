@@ -20,17 +20,17 @@ class AudioController {
     
     // Audio file paths
     this.audioFiles = {
-      hover: 'audio/hover.mp3',
-      click: 'audio/click.mp3',
-      nav: 'audio/nav.mp3',
-      cta: 'audio/cta.mp3',
-      input: 'audio/input.mp3',
-      submit: 'audio/submit.mp3',
-      ambient: 'audio/ambient.mp3',
-      sample1: 'audio/sample1.mp3',
-      sample2: 'audio/sample2.mp3',
-      sample3: 'audio/sample3.mp3',
-      sample4: 'audio/sample4.mp3'
+      hover: 'assets/audio/hover.mp3',
+      click: 'assets/audio/click.mp3',
+      nav: 'assets/audio/nav.mp3',
+      cta: 'assets/audio/cta.mp3',
+      input: 'assets/audio/input.mp3',
+      submit: 'assets/audio/submit.mp3',
+      ambient: 'assets/audio/ambient.mp3',
+      sample1: 'assets/audio/sample1.mp3',
+      sample2: 'assets/audio/sample2.mp3',
+      sample3: 'assets/audio/sample3.mp3',
+      sample4: 'assets/audio/sample4.mp3'
     };
     
     // Bind methods

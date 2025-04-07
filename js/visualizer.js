@@ -30,11 +30,19 @@ class Visualizer {
       white: new THREE.Color('#fbf9e2')
     };
     
+    // Line animation properties
+    this.lineCount = 50;
+    this.lines = null;
+    this.lineAnimationSpeed = 0.05; // Speed of line movement
+    this.lineMovementDirections = [];
+    
     // Bind methods
     this.init = this.init.bind(this);
     this.createScene = this.createScene.bind(this);
     this.createParticles = this.createParticles.bind(this);
     this.createLights = this.createLights.bind(this);
+    this.createConnectingLines = this.createConnectingLines.bind(this);
+    this.animateLines = this.animateLines.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.animate = this.animate.bind(this);
@@ -198,7 +206,6 @@ class Visualizer {
   
   // Create connecting lines between particles
   createConnectingLines() {
-    const lineCount = 50;
     const lineGeometry = new THREE.BufferGeometry();
     const lineMaterial = new THREE.LineBasicMaterial({
       color: this.colors.teal,
@@ -209,9 +216,12 @@ class Visualizer {
     
     // Create lines
     const positions = this.particles.attributes.position.array;
-    const linePositions = new Float32Array(lineCount * 6); // 2 points per line, 3 values per point
+    const linePositions = new Float32Array(this.lineCount * 6); // 2 points per line, 3 values per point
     
-    for (let i = 0; i < lineCount; i++) {
+    // Initialize movement directions for each line endpoint
+    this.lineMovementDirections = [];
+    
+    for (let i = 0; i < this.lineCount; i++) {
       // Select two random particles
       const index1 = Math.floor(Math.random() * (positions.length / 3)) * 3;
       const index2 = Math.floor(Math.random() * (positions.length / 3)) * 3;
@@ -224,11 +234,109 @@ class Visualizer {
       linePositions[i * 6 + 3] = positions[index2];
       linePositions[i * 6 + 4] = positions[index2 + 1];
       linePositions[i * 6 + 5] = positions[index2 + 2];
+      
+      // Create random movement directions for each endpoint
+      this.lineMovementDirections.push({
+        start: new THREE.Vector3(
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2
+        ).normalize().multiplyScalar(this.lineAnimationSpeed),
+        end: new THREE.Vector3(
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2
+        ).normalize().multiplyScalar(this.lineAnimationSpeed)
+      });
     }
     
     lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
     this.lines = new THREE.LineSegments(lineGeometry, lineMaterial);
     this.scene.add(this.lines);
+  }
+  
+  // Animate the lines - make them move continuously in 3D space
+  animateLines() {
+    if (!this.lines) return;
+    
+    const positionAttribute = this.lines.geometry.getAttribute('position');
+    const positions = positionAttribute.array;
+    
+    // Update each line endpoint position
+    for (let i = 0; i < this.lineCount; i++) {
+      // First endpoint (start of line)
+      positions[i * 6] += this.lineMovementDirections[i].start.x;
+      positions[i * 6 + 1] += this.lineMovementDirections[i].start.y;
+      positions[i * 6 + 2] += this.lineMovementDirections[i].start.z;
+      
+      // Second endpoint (end of line)
+      positions[i * 6 + 3] += this.lineMovementDirections[i].end.x;
+      positions[i * 6 + 4] += this.lineMovementDirections[i].end.y;
+      positions[i * 6 + 5] += this.lineMovementDirections[i].end.z;
+      
+      // Check boundaries and reverse direction if needed
+      // Keep lines within a reasonable volume
+      const maxDistance = 1000;
+      
+      // Check first endpoint (start of line)
+      for (let j = 0; j < 3; j++) {
+        const pos = positions[i * 6 + j];
+        if (Math.abs(pos) > maxDistance) {
+          // Reverse direction
+          if (j === 0) this.lineMovementDirections[i].start.x *= -1;
+          if (j === 1) this.lineMovementDirections[i].start.y *= -1;
+          if (j === 2) this.lineMovementDirections[i].start.z *= -1;
+          
+          // Keep within bounds
+          positions[i * 6 + j] = Math.sign(pos) * maxDistance;
+        }
+      }
+      
+      // Check second endpoint (end of line)
+      for (let j = 0; j < 3; j++) {
+        const pos = positions[i * 6 + 3 + j];
+        if (Math.abs(pos) > maxDistance) {
+          // Reverse direction
+          if (j === 0) this.lineMovementDirections[i].end.x *= -1;
+          if (j === 1) this.lineMovementDirections[i].end.y *= -1;
+          if (j === 2) this.lineMovementDirections[i].end.z *= -1;
+          
+          // Keep within bounds
+          positions[i * 6 + 3 + j] = Math.sign(pos) * maxDistance;
+        }
+      }
+      
+      // Occasionally change direction randomly
+      if (Math.random() < 0.01) {
+        this.lineMovementDirections[i].start.x = (Math.random() - 0.5) * 2 * this.lineAnimationSpeed;
+        this.lineMovementDirections[i].start.y = (Math.random() - 0.5) * 2 * this.lineAnimationSpeed;
+        this.lineMovementDirections[i].start.z = (Math.random() - 0.5) * 2 * this.lineAnimationSpeed;
+      }
+      
+      if (Math.random() < 0.01) {
+        this.lineMovementDirections[i].end.x = (Math.random() - 0.5) * 2 * this.lineAnimationSpeed;
+        this.lineMovementDirections[i].end.y = (Math.random() - 0.5) * 2 * this.lineAnimationSpeed;
+        this.lineMovementDirections[i].end.z = (Math.random() - 0.5) * 2 * this.lineAnimationSpeed;
+      }
+      
+      // Every so often, randomly relocate a line to keep the visualization fresh
+      if (Math.random() < 0.00005) {
+        const particlePositions = this.particles.attributes.position.array;
+        const index1 = Math.floor(Math.random() * (particlePositions.length / 3)) * 3;
+        const index2 = Math.floor(Math.random() * (particlePositions.length / 3)) * 3;
+        
+        positions[i * 6] = particlePositions[index1];
+        positions[i * 6 + 1] = particlePositions[index1 + 1];
+        positions[i * 6 + 2] = particlePositions[index1 + 2];
+        
+        positions[i * 6 + 3] = particlePositions[index2];
+        positions[i * 6 + 4] = particlePositions[index2 + 1];
+        positions[i * 6 + 5] = particlePositions[index2 + 2];
+      }
+    }
+    
+    // Update the geometry
+    positionAttribute.needsUpdate = true;
   }
   
   // Create lights
@@ -335,11 +443,8 @@ class Visualizer {
       light.position.y = Math.sin(angle) * radius;
     });
     
-    // Update connecting lines
-    if (this.lines && Math.random() < 0.02) {
-      this.scene.remove(this.lines);
-      this.createConnectingLines();
-    }
+    // Animate lines with continuous movement
+    this.animateLines();
   }
   
   // Update visualization with audio data
@@ -396,6 +501,9 @@ class Visualizer {
       
       light.intensity = 0.5 + frequencyValue;
     });
+    
+    // Update line animation speed based on audio energy
+    this.lineAnimationSpeed = 0.05 + averageVolume * 0.1;
   }
   
   // Set audio data

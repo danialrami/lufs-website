@@ -911,3 +911,90 @@ p {
 .no-scroll {
   overflow: hidden;
 }
+
+/* 
+ * Custom Cursor Styles with Orbit Behavior
+ * Add these to your existing styles.css file
+ */
+
+/* ===== Custom Cursor ===== */
+.cursor-dot,
+.cursor-ring {
+  pointer-events: none;
+  position: fixed;
+  z-index: var(--z-cursor);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-primary);
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+}
+
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--accent-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease, opacity 0.3s ease;
+}
+
+/* For interactive elements */
+.cursor-ring.hover {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(120, 190, 186, 0.1);
+}
+
+/* For clickable elements */
+.cursor-ring.active {
+  width: 20px;
+  height: 20px;
+  background-color: var(--accent-primary);
+  opacity: 0.5;
+}
+
+/* Dot pulsing animation for audio sync */
+.cursor-dot.pulse {
+  animation: cursorPulse 0.3s ease-out;
+}
+
+@keyframes cursorPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Ensure elements with cursor interactions show the right feedback */
+a, button, input, textarea, .service-card, .portfolio-item, .process-step, .scroll-indicator {
+  cursor: none;
+}
+
+/* For touch devices, restore default cursor behavior */
+@media (hover: none) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+  
+  body, a, button, input, textarea, 
+  .service-card, .portfolio-item, .process-step, .scroll-indicator {
+    cursor: auto;
+  }
+}

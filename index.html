@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUFS Audio | Sound Design & Audio Implementation</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- Preload audio files -->
+    <link rel="preload" href="audio/hover.mp3" as="audio">
+    <link rel="preload" href="audio/click.mp3" as="audio">
+    <link rel="preload" href="audio/ambient.mp3" as="audio">
+</head>
+<body>
+    <!-- Loading screen -->
+    <div class="loading-screen">
+        <div class="loading-logo">
+            <img src="assets/lufs-squares.svg" alt="LUFS Squares">
+        </div>
+        <div class="loading-progress">
+            <div class="loading-bar"></div>
+        </div>
+        <div class="loading-text">Initializing Audio Experience</div>
+    </div>
+
+    <!-- Audio controls -->
+    <div class="audio-controls">
+        <button class="audio-toggle" aria-label="Toggle audio">
+            <span class="audio-icon"></span>
+        </button>
+        <div class="volume-slider">
+            <input type="range" min="0" max="100" value="75" class="volume-range">
+        </div>
+    </div>
+
+    <!-- Main canvas for Three.js visualization -->
+    <canvas id="visualization-canvas"></canvas>
+
+    <!-- Main content container -->
+    <div class="content-container">
+        <!-- Header -->
+        <header class="site-header">
+            <div class="logo">
+                <img src="assets/lufs-LOGO-03.png" alt="LUFS Audio Logo">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#home" class="nav-link active" data-sound="nav">Home</a></li>
+                    <li><a href="#about" class="nav-link" data-sound="nav">About</a></li>
+                    <li><a href="#services" class="nav-link" data-sound="nav">Services</a></li>
+                    <!-- <li><a href="#portfolio" class="nav-link" data-sound="nav">Portfolio</a></li> -->
+                    <li><a href="#process" class="nav-link" data-sound="nav">Process</a></li>
+                    <li><a href="#contact" class="nav-link" data-sound="nav">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </header>
+
+        <!-- Main sections -->
+        <main>
+            <!-- Home section -->
+            <section id="home" class="section active">
+                <div class="section-content">
+                    <h1 class="main-title">
+                        <span class="title-line">Sound Design &</span>
+                        <span class="title-line">Audio Implementation</span>
+                    </h1>
+                    <p class="tagline">Creating custom audio elements that enhance products, experiences, and media</p>
+                    <div class="cta-container">
+                        <a href="#services" class="cta-button" data-sound="cta">Explore Services</a>
+                        <!-- <a href="#portfolio" class="cta-button secondary" data-sound="cta">View Portfolio</a> -->
+                    </div>
+                </div>
+                <div class="scroll-indicator">
+                    <span>Scroll to explore</span>
+                    <div class="scroll-arrow"></div>
+                </div>
+            </section>
+
+            <!-- About section -->
+            <section id="about" class="section">
+                <div class="section-content">
+                    <h2 class="section-title">About</h2>
+                    <div class="about-content">
+                        <div class="about-text">
+                            <p>LUFS Audio provides professional sound design, music composition, and technical audio implementation services. With a focus on creating immersive audio experiences, I bring products and media to life through carefully crafted sound.</p>
+                            <p>My approach combines technical expertise with creative passion, resulting in audio that enhances user experiences and strengthens brand identity.</p>
+                        </div>
+                        <div class="about-image">
+                            <div class="waveform-container">
+                                <canvas id="waveform-canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services section -->
+            <section id="services" class="section">
+                <div class="section-content">
+                    <h2 class="section-title">Services</h2>
+                    <div class="services-grid">
+                        <div class="service-card" data-sound="hover">
+                            <div class="service-icon sound-design-icon"></div>
+                            <h3>Sound Design</h3>
+                            <p>Custom audio elements for products, experiences, and media that enhance user engagement and create memorable interactions.</p>
+                        </div>
+                        <div class="service-card" data-sound="hover">
+                            <div class="service-icon music-icon"></div>
+                            <h3>Music Composition</h3>
+                            <p>Original scores and soundtracks tailored to your project's emotional and narrative needs, creating the perfect sonic atmosphere.</p>
+                        </div>
+                        <div class="service-card" data-sound="hover">
+                            <div class="service-icon implementation-icon"></div>
+                            <h3>Technical Audio Implementation</h3>
+                            <p>Seamless integration of audio into software, games, and interactive media, ensuring optimal performance and user experience.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Portfolio section 
+            <section id="portfolio" class="section">
+                <div class="section-content">
+                    <h2 class="section-title">Portfolio</h2>
+                    <div class="portfolio-grid">
+                        <div class="portfolio-item" data-sound="hover">
+                            <div class="portfolio-image">
+                                <div class="portfolio-placeholder"></div>
+                            </div>
+                            <div class="portfolio-info">
+                                <h3>Project One</h3>
+                                <p>Sound Design</p>
+                                <button class="play-sample" data-track="sample1" data-sound="click">
+                                    <span class="play-icon"></span>
+                                    Play Sample
+                                </button>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-sound="hover">
+                            <div class="portfolio-image">
+                                <div class="portfolio-placeholder"></div>
+                            </div>
+                            <div class="portfolio-info">
+                                <h3>Project Two</h3>
+                                <p>Music Composition</p>
+                                <button class="play-sample" data-track="sample2" data-sound="click">
+                                    <span class="play-icon"></span>
+                                    Play Sample
+                                </button>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-sound="hover">
+                            <div class="portfolio-image">
+                                <div class="portfolio-placeholder"></div>
+                            </div>
+                            <div class="portfolio-info">
+                                <h3>Project Three</h3>
+                                <p>Audio Implementation</p>
+                                <button class="play-sample" data-track="sample3" data-sound="click">
+                                    <span class="play-icon"></span>
+                                    Play Sample
+                                </button>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-sound="hover">
+                            <div class="portfolio-image">
+                                <div class="portfolio-placeholder"></div>
+                            </div>
+                            <div class="portfolio-info">
+                                <h3>Project Four</h3>
+                                <p>Sound Design</p>
+                                <button class="play-sample" data-track="sample4" data-sound="click">
+                                    <span class="play-icon"></span>
+                                    Play Sample
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section -->
+
+            <!-- Process section -->
+            <section id="process" class="section">
+                <div class="section-content">
+                    <h2 class="section-title">Process</h2>
+                    <div class="process-timeline">
+                        <div class="process-step" data-sound="hover">
+                            <div class="step-number">01</div>
+                            <div class="step-content">
+                                <h3>Discovery</h3>
+                                <p>Understanding your project goals, audience, and technical requirements to establish a clear audio direction.</p>
+                            </div>
+                        </div>
+                        <div class="process-step" data-sound="hover">
+                            <div class="step-number">02</div>
+                            <div class="step-content">
+                                <h3>Concept</h3>
+                                <p>Creating initial sound concepts and demos for review, establishing the sonic palette for your project.</p>
+                            </div>
+                        </div>
+                        <div class="process-step" data-sound="hover">
+                            <div class="step-number">03</div>
+                            <div class="step-content">
+                                <h3>Production</h3>
+                                <p>Developing final audio assets with attention to detail, ensuring technical quality and creative excellence.</p>
+                            </div>
+                        </div>
+                        <div class="process-step" data-sound="hover">
+                            <div class="step-number">04</div>
+                            <div class="step-content">
+                                <h3>Implementation</h3>
+                                <p>Integrating audio into your project, optimizing performance, and ensuring seamless functionality.</p>
+                            </div>
+                        </div>
+                        <div class="process-step" data-sound="hover">
+                            <div class="step-number">05</div>
+                            <div class="step-content">
+                                <h3>Refinement</h3>
+                                <p>Fine-tuning the audio experience based on testing and feedback to achieve the perfect result.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact section -->
+            <section id="contact" class="section">
+                <div class="section-content">
+                    <h2 class="section-title">Contact</h2>
+                    <div class="contact-container">
+                        <div class="contact-info">
+                            <p>I'd love to hear from you! Get in touch to discuss how we can work together.</p>
+                            <div class="contact-details">
+                                <div class="contact-item">
+                                    <span class="contact-label">Email</span>
+                                    <a href="mailto:daniel@lufsaudio.com" class="contact-value" data-sound="hover">daniel@lufsaudio.com</a>
+                                </div>
+                                <div class="contact-item">
+                                    <!-- <span class="contact-label">Location</span>
+                                    <span class="contact-value">San Francisco, CA</span> -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="contact-form">
+                            <form id="contact-form">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" id="name" name="name" required data-sound="input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" required data-sound="input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="message">Message</label>
+                                    <textarea id="message" name="message" required data-sound="input"></textarea>
+                                </div>
+                                <button type="submit" class="submit-button" data-sound="submit">Send Message</button>
+                            </form>
+                        </div> -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/lufs-wordmarks-02.png" alt="LUFS Audio Logo">
+                </div>
+                <div class="footer-links">
+                    <a href="https://bsky.app/profile/danirami.bsky.social" class="social-link" data-sound="hover">Bluesky</a>
+                    <a href="https://www.instagram.com/danialrami/" class="social-link" data-sound="hover">Instagram</a>
+                    <a href="https://www.linkedin.com/in/danialrami/" class="social-link" data-sound="hover">LinkedIn</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; <span id="current-year">2025</span> LUFS Audio. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Custom cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Scripts -->
+    <script src="js/vendor/three.min.js"></script>
+    <script src="js/audio-controller.js"></script>
+    <script src="js/visualizer.js"></script>
+    <script src="js/waveform.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

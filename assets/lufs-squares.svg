@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <defs>
+    <style>
+      .blue-button {
+        fill: #2069af;
+      }
+      .red-button {
+        fill: #d35233;
+      }
+      .teal-button {
+        fill: #78beba;
+      }
+      .yellow-button {
+        fill: #e7b225;
+      }
+    </style>
+  </defs>
+  
+  <!-- Yellow button (leftmost) -->
+  <path class="yellow-button" d="M20,20 H40 C42,20 44,22 44,24 V44 C44,46 42,48 40,48 H20 C18,48 16,46 16,44 V24 C16,22 18,20 20,20 Z"/>
+  
+  <!-- Teal button (second from left) -->
+  <path class="teal-button" d="M68,20 H88 C90,20 92,22 92,24 V44 C92,46 90,48 88,48 H68 C66,48 64,46 64,44 V24 C64,22 66,20 68,20 Z"/>
+  
+  <!-- Blue button (third from left) -->
+  <path class="blue-button" d="M116,20 H136 C138,20 140,22 140,24 V44 C140,46 138,48 136,48 H116 C114,48 112,46 112,44 V24 C112,22 114,20 116,20 Z"/>
+  
+  <!-- Red button (rightmost) -->
+  <path class="red-button" d="M164,20 H184 C186,20 188,22 188,24 V44 C188,46 186,48 184,48 H164 C162,48 160,46 160,44 V24 C160,22 162,20 164,20 Z"/>
+</svg>

@@ -463,15 +463,21 @@ p {
 }
 
 .sound-design-icon {
-  background-image: url('../assets/Asset-3.svg');
+  background-image: url('../assets/lufs-squares-yellow.svg');
+  width: 25px;
+  height: 25px;
 }
 
 .music-icon {
-  background-image: url('../assets/Asset-1.svg');
+  background-image: url('../assets/lufs-squares-blue.svg');
+  width: 25px;
+  height: 25px;
 }
 
 .implementation-icon {
-  background-image: url('../assets/GLASS.svg');
+  background-image: url('../assets/lufs-squares-red.svg');
+  width: 25px;
+  height: 25px;
 }
 
 /* ===== Portfolio Section ===== */

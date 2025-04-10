@@ -1,9 +1,6 @@
 # Ignore macOS specific files
 .DS_Store
 
-# Ignore node_modules directory
-node_modules/
-
 # Ignore build artifacts
 dist/
 build/

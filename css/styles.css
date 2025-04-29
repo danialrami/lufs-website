@@ -1022,3 +1022,13 @@ a, button, input, textarea, .service-card, .portfolio-item, .process-step, .scro
     cursor: auto;
   }
 }
+
+::selection {
+  background-color: rgba(120, 190, 186, 0.7); /* Semi-transparent teal */
+  color: var(--white);
+}
+
+::-moz-selection {
+  background-color: rgba(120, 190, 186, 0.7);
+  color: var(--white);
+}
